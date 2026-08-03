@@ -18,7 +18,11 @@
   },
   "homepage": "https://github.com/abhiav-spec/second_brain#readme",
   "devDependencies": {
+    "@types/express": "^5.0.6",
     "@types/node": "^26.1.1",
     "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
   }
 }
