@@ -1,45 +1,79 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
-// ─────────────────────────────────────────────
-// Models (stubs — fields to be filled in later)
-// ─────────────────────────────────────────────
+enum ContentType {
+  LINK
+  TWITTER
+  YOUTUBE
+  DOCUMENT
+  IMAGE
+  ARTICLE
+}
 
 model User {
-  id        String   @id @default(cuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  username String @unique
+  email    String @unique
+  password String
+
+  contents  Content[]
+  tags      Tag[]
+  shareLink ShareLink?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model Collection {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
+model Content {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
 
-model Link {
-  id        String   @id @default(cuid())
+  title       String
+  url         String
+  description String?
+
+  type ContentType @default(LINK)
+
+  userId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id])
+
+  tagIds String[] @db.ObjectId
+  tags   Tag[]    @relation(fields: [tagIds], references: [id])
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Tag {
-  id        String   @id @default(cuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  title String
+
+  userId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id])
+
+  contentIds String[]  @db.ObjectId
+  contents   Content[] @relation(fields: [contentIds], references: [id])
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([userId, title])
 }
 
-model ShareToken {
-  id        String   @id @default(cuid())
+model ShareLink {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  hash String @unique
+
+  userId String @unique @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id])
+
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
