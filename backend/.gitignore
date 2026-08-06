@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+dist/
+
+# Environment variables (NEVER commit real secrets)
+.env
+.env.local
+.env.production
+
+# Prisma
+prisma/migrations/
+
+# Logs
+logs/
+*.log
+
+# OS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
